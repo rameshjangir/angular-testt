@@ -17,7 +17,7 @@ RUN ng build --base-href=.
 
 ### Stage 2 : RUN ###
 FROM nginx:1.16.0-alpine
-COPY  dist/rnt-portfolio  /usr/share/nginx/html
+COPY  dist/angular-crud  /usr/share/nginx/html
 
 
 
