@@ -8,7 +8,6 @@ phases:
     commands:
       - echo installing Dependencies
       - npm install  
-      - $(aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 928052840712.dkr.ecr.us-east-2.amazonaws.com)
   build:
     commands:
       - echo Starting The Process
@@ -21,6 +20,7 @@ phases:
   post_build:
     commands:
       - echo Pushing the Docker Image
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
       - prinf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinations.json 
       - echo "Done."
