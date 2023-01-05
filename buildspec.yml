@@ -1,11 +1,5 @@
 version: 0.2
-env:
-  variables:
-    AWS_ACCOUNT_ID=928052840712
-    AWS_DEFAULT_REGION=us-east-2
-    CONTAINER_NAME=angular
-    IMAGE_REPO_NAME=angular
-    IMAGE_TAG=latest
+
 phases:
   install:
     runtime-versions:
