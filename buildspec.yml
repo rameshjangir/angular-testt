@@ -3,26 +3,17 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 16
-  pre_build:
+        nodejs: 16
     commands:
-      - echo installing Dependencies
-      - npm install  
+        - echo Installing source NPM dependencies...
+        - npm install
+        - npm install -g @angular/cli
   build:
     commands:
-      - echo Starting The Process
-      - npm install -g @angular/cli@latest
-      - ng build --base-href=.
-      - echo Building a Docker image..
-      - docker build -t angular .
-      - echo Tagging Docker image for ECR..
-      - docker tag angular:latest 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest
-  post_build:
-    commands:
-      - echo Pushing the Docker Image
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com
-      - docker push 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest 
-      - echo DONE
-      - printf '[{"name":"angular","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/angular:latest > imagedefinitions.json
+        - echo Build started 
+        - ng build --base-href=.
 artifacts:
-  files: imagedefinitions.json
+    files:
+        - '**/*'
+    base-directory: 'dist/angular-crud'
+    discard-paths: no
