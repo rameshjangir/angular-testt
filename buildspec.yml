@@ -16,6 +16,8 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon EKS...
+      - chmod +x create_iam_role.sh
+      - sh create_iam_role.sh 
       - eksctl utils write-kubeconfig --cluster=angularrj
       - echo check config
       - kubectl config view --minify
