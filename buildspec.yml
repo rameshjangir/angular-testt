@@ -16,7 +16,7 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon EKS...
-      - aws eks --region us-east-2 update-kubeconfig --name angularrj
+      - eksctl utils write-kubeconfig --cluster=angularrj
       - echo check config
       - kubectl config view --minify
       - echo check kubectl access
