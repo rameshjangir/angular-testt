@@ -21,6 +21,7 @@ phases:
       - eksctl utils write-kubeconfig --cluster=angularrj
       - echo check config
       - kubectl config view --minify
+      - eksctl version
       - eksctl create iamidentitymapping --cluster angularrj  --arn arn:aws:iam::928052840712:role/CodeBuildKubectlRole --group system:masters --username CodeBuildKubectlRole
       - kubectl get configmaps aws-auth -n kube-system -o yaml > aws-auth.yaml 
       - kubectl apply -f aws-auth.yaml
