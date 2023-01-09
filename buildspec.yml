@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/linux/amd64/kubectl
+      - curl -o kubectl curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.24.7/2022-10-31/bin/linux/amd64/kubectl
       - chmod +x ./kubectl
       - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
       - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
@@ -16,7 +16,8 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon EKS...
-      - echo check config 
+      - aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $angularrj
+      - echo check config
       - kubectl config view --minify
       - echo check kubectl access
       - kubectl get svc
