@@ -23,7 +23,6 @@ phases:
       - kubectl config view --minify
       - eksctl version
       - echo check kubectl access
-      - kubectl get svc
       - echo installing Dependencies
       - npm install
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com
@@ -44,8 +43,6 @@ phases:
       - docker push 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest 
       - echo DONE
       - echo Push the latest image to cluster
-      - kubectl apply -f deployment.yaml
-      - kubectl rollout restart -f deployment.yaml
       - printf '[{"name":"angular","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/angular:latest > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
