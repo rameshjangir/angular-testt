@@ -15,7 +15,6 @@ phases:
       nodejs: 16
   pre_build:
     commands:
-      - kubectl version
       - echo Logging in to Amazon EKS...
       - chmod +x create_iam_role.sh
       - sh create_iam_role.sh 
@@ -44,6 +43,13 @@ phases:
       - docker push 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest 
       - echo DONE
       - echo Push the latest image to cluster
+      - CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam::928052840712:role/service-role/codebuild-angular-service-role --role-session-name codebuild-kubectl --duration-seconds 900)
+      - export AWS_ACCESS_KEY_ID="$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')"
+      - export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
+      - export AWS_SESSION_TOKEN="$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')"
+      - export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
+      - aws eks update-kubeconfig --name angularrj
+      - kubectl apply -f deployment.yml
       - printf '[{"name":"angular","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/angular:latest > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
