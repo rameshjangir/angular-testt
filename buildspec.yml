@@ -23,7 +23,7 @@ phases:
       - kubectl config view --minify
       - eksctl version
       - echo check kubectl access
-      - kubectl get nodes
+      - kubectl version
       - echo installing Dependencies
       - npm install
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com
