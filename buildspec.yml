@@ -18,7 +18,7 @@ phases:
       - echo Logging in to Amazon EKS...
       - chmod +x create_iam_role.sh
       - sh create_iam_role.sh 
-      - eksctl utils write-kubeconfig --cluster=angularrj
+      - eksctl utils write-kubeconfig --cluster=angula
       - echo check config
       - kubectl config view --minify
       - eksctl version
