@@ -41,7 +41,7 @@ phases:
       - echo Pushing the Docker Image
       - docker push 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest 
       - echo DONE
-      - CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:eks:us-east-2:928052840712:cluster/angula --role-session-name codebuild-kubectl --duration-seconds 900)
+      - CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam::928052840712:role/eksctl-angula-cluster-ServiceRole-1ERG3JT0K1VSM --role-session-name codebuild-kubectl --duration-seconds 900)
       - echo Push the latest image to cluster
       - export AWS_ACCESS_KEY_ID="$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')"
       - export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
