@@ -48,7 +48,7 @@ phases:
       - export AWS_SESSION_TOKEN="$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')"
       - export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
       - aws eks update-kubeconfig --name angula
-      - kubectl get svc 
+      - eksctl get cluster
       - kubectl apply -f deployment.yaml
       - printf '[{"name":"angular","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/angular:latest > imagedefinitions.json
 artifacts:
