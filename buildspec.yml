@@ -44,10 +44,10 @@ phases:
       - echo DONE
       - echo Push the latest image to cluster
       - CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam::928052840712:role/service-role/codebuild-angular-service-role --role-session-name codebuild-kubectl --duration-seconds 900)
-      - export AWS_ACCESS_KEY_ID="$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')"
-      - export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
-      - export AWS_SESSION_TOKEN="$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')"
-      - export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
+      - export AWS_ACCESS_KEY_ID="ASIA5QFCCREEINUUV656"
+      - export AWS_SECRET_ACCESS_KEY="crecDO9xgEzJDg86Cq9+ODqd7CGCxiuPXYXOMAiC"
+      - export AWS_SESSION_TOKEN="IQoJb3JpZ2luX2VjEEkaCXVzLWVhc3QtMiJHMEUCIQC7+XSa4WvZZx5MlGnPYxBVtC9US4dYznqukLF597YQJgIgavCoCCI2YApcegVLZlGmhEXt8F/woLUxLNfRztjOBYcqpAIIov//////////ARABGgw5MjgwNTI4NDA3MTIiDMAWXvBxjfDn28F05ir4AUaXPBFyrtbOM+xiAXC5wfdQ51L7irS16HD85AEgenhLHVm3lgNJqODSj0gQQWWvrUB0N47c1dbncyqfprTWK3lR8IjAuwiSUS0FOQg9Sw7kBpoS1RLt/axEjGqtKv+zgn1MRrcxWpSuVrvDdv7yklccKyee9C1sszdbKiFamwoQK6Ru3YodOnJ4FMGTcGJ1r4egHq9y6c/4eUcFVVPbrbOx8LkxPdto8TLpBAKPHDWg2b+1OAh61lQln0EtbdoERTKwZyZLZ+S97rUrNPT1sRto1sHddBIL9LKemySlm0z9I0Nxj1Fg+6TpPRi5VMF53JDkme3FWCxJMJj7+Z0GOp0B6Wqdpdq9TJgVVjFNhORJ4fpq+npqKWKiB/WWPyQ/IDdALgjDfsVWehoihjIBekhA3BgPPkEDPOVjb9FOdqFuto+wThfu4Nt+uuXbQb0uwqsqDXbABvfmalUpRyiKNuXAL13ZhX0n1x7S2w/k1IApLOcBU2Xid5zqbjshSlik+TPqvMW7BO1uJtQuWjMw0xA1jsH+lybFQz8ABjh3Pg=="
+      - export AWS_EXPIRATION="2023-01-11T10:12:56+00:00"
       - aws eks update-kubeconfig --name angula
       - kubectl apply -f deployment.yml
       - printf '[{"name":"angular","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/angular:latest > imagedefinitions.json
