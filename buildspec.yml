@@ -10,8 +10,6 @@ phases:
       - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
       - echo 'Check kubectl version'
       - kubectl version --short --client
-      - chmod +x prereqs.sh
-      - sh prereqs.sh
     runtime-versions:
       nodejs: 16
   pre_build:
