@@ -10,21 +10,22 @@ phases:
       - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
       - echo 'Check kubectl version'
       - kubectl version --short --client
+      - chmod +x prereqs.sh
+      - sh prereqs.sh
     runtime-versions:
       nodejs: 16
   pre_build:
     commands:
       - echo Logging in to Amazon EKS...
-      - chmod +x create_iam_role.sh
-      - sh create_iam_role.sh 
-      - eksctl utils write-kubeconfig --cluster cicd-demo
-      - echo check config
+      - aws eks --region us-east-2 update-kubeconfig --name cicd-demo
+      - echo check config 
       - kubectl config view --minify
-      - eksctl version
       - echo check kubectl access
-      - echo installing Dependencies
-      - npm install
+      - kubectl get svc
+      - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 063575941317.dkr.ecr.us-east-2.amazonaws.com
+      - REPOSITORY_URI=$063575941317.dkr.ecr.us-east-2.amazonaws.com/cicd-demo
+      - docker pull $REPOSITORY_URI:latest
   build:
     commands:
       - echo Starting The Process
@@ -40,15 +41,8 @@ phases:
       - echo Pushing the Docker Image
       - docker push 063575941317.dkr.ecr.us-east-2.amazonaws.com/cicd-demo:latest
       - echo DONE
-      - CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam::928052840712:role/eksctl-angula-cluster-ServiceRole-1ERG3JT0K1VSM --role-session-name codebuild-kubectl --duration-seconds 900)
-      - echo Push the latest image to cluster
-      - export AWS_ACCESS_KEY_ID="$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')"
-      - export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
-      - export AWS_SESSION_TOKEN="$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')"
-      - export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
-      - aws eks update-kubeconfig --name angula
-      - eksctl get cluster
       - kubectl apply -f deployment.yaml
+      - kubectl rollout restart -f deployment.yaml
       - printf '[{"name":"angular","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/angular:latest > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
