@@ -17,14 +17,14 @@ phases:
       - echo Logging in to Amazon EKS...
       - chmod +x create_iam_role.sh
       - sh create_iam_role.sh 
-      - eksctl utils write-kubeconfig --cluster=angula
+      - eksctl utils write-kubeconfig --cluster cicd-demo
       - echo check config
       - kubectl config view --minify
       - eksctl version
       - echo check kubectl access
       - echo installing Dependencies
       - npm install
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com
+      - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com
   build:
     commands:
       - echo Starting The Process
