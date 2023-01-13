@@ -12,6 +12,8 @@ phases:
       - kubectl version --short --client
       - chmod +x prereqs.sh
       - sh prereqs.sh
+      - chmod +x create_iam_role.sh
+      - sh create_iam_role.sh
     runtime-versions:
       nodejs: 16
   pre_build:
