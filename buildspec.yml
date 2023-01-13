@@ -19,7 +19,7 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon EKS...
-      - aws eks --region us-east-2 update-kubeconfig --name cicd-demo
+      - aws eks update-kubeconfig --name cicd-demo --region us-east-2 --role-arn arn:aws:iam::063575941317:user/eks-pipeline
       - echo check config 
       - kubectl config view --minify
       - echo check kubectl access
