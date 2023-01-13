@@ -24,21 +24,21 @@ phases:
       - echo check kubectl access
       - echo installing Dependencies
       - npm install
-      - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com
+      - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 063575941317.dkr.ecr.us-east-2.amazonaws.com
   build:
     commands:
       - echo Starting The Process
       - npm install -g @angular/cli@latest
       - ng build --base-href=.
       - echo Building a Docker image..
-      - docker build -t angular .
+      - docker build -t cicd-demo .
       - echo Tagging Docker image for ECR..
-      - docker tag angular:latest 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest
+      - docker tag cicd-demo:latest 063575941317.dkr.ecr.us-east-2.amazonaws.com/cicd-demo:latest
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker Image
-      - docker push 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest 
+      - docker push 063575941317.dkr.ecr.us-east-2.amazonaws.com/cicd-demo:latest
       - echo DONE
       - CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam::928052840712:role/eksctl-angula-cluster-ServiceRole-1ERG3JT0K1VSM --role-session-name codebuild-kubectl --duration-seconds 900)
       - echo Push the latest image to cluster
