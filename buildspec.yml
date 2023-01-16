@@ -3,8 +3,8 @@ run-as: root
 
 env: 
   parameter-store:
-    ACCESS_KEY_ID: "AKIA5QFCCREEFTUNQLNS"
-    SECRET_ACCESS_KEY: "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"
+    ACCESS_KEY_ID: "alias/aws/ssm"
+    SECRET_ACCESS_KEY: "alias/aws/ssm"
   git-credential-helper: yes
 
 phases:
