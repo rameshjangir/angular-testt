@@ -14,7 +14,7 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon EKS...
-      - aws configure import --csv credentials.csv
+      - aws configure import --csv file://credentials.csv
       - aws eks update-kubeconfig --name angula --region us-east-2 
       - echo check config 
       - kubectl config view --minify
