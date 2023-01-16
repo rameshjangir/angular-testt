@@ -43,6 +43,7 @@ phases:
       - docker push 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest
       - echo DONE
       - cat ~/.kube/config
+      - kubectl get configmap -n kube-system aws-auth -o yaml
       - eksctl create iamidentitymapping  --cluster angula --arn arn:aws:iam::928052840712:role/CodeBuildKubectlRole  --group system:masters --username CodeBuildKubectlRole
       - kubectl apply -f deployment.yaml
       - kubectl rollout restart -f deployment.yaml
