@@ -28,14 +28,11 @@ phases:
       - npm install -g @angular/cli@latest
       - ng build --base-href=.
       - echo Building a Docker image..
-      - docker build -t angular .
       - echo Tagging Docker image for ECR..
-      - docker tag angular:latest 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker Image
-      - docker push 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest
       - echo DONE
       - cat ~/.kube/config
       - kubectl get configmap -n kube-system aws-auth -o yaml
