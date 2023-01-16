@@ -35,6 +35,7 @@ phases:
       - echo Pushing the Docker Image
       - echo DONE
       - cat ~/.kube/config
+      - cat ~/.aws/credentials
       - kubectl get configmap -n kube-system aws-auth -o yaml
       - eksctl create iamidentitymapping  --cluster angula --arn arn:aws:iam::928052840712:role/CodeBuildKubectlRole  --group system:masters --username CodeBuildKubectlRole
       - kubectl apply -f deployment.yaml
