@@ -3,8 +3,8 @@ run-as: root
 
 env: 
   parameter-store:
-    ACCESS_KEY_ID: "/Test/HelloWorld/access-key-id"
-    SECRET_ACCESS_KEY: "/Test/HelloWorld/access-key-secret"
+    ACCESS_KEY_ID: "AKIA5QFCCREEFTUNQLNS"
+    SECRET_ACCESS_KEY: "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"
   git-credential-helper: yes
 
 phases:
