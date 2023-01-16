@@ -42,7 +42,6 @@ phases:
       - echo Pushing the Docker Image
       - docker push 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest
       - echo DONE
-      - kubectl get svc
       - kubectl apply -f deployment.yaml
       - kubectl rollout restart -f deployment.yaml
       - printf '[{"name":"angular","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/angular:latest > imagedefinitions.json
