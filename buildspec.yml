@@ -43,6 +43,7 @@ phases:
       - docker push 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest
       - echo DONE
       - cat ~/.kube/config
+      - eksctl create iamidentitymapping  --cluster angula --arn arn:aws:iam::928052840712:role/CodeBuildKubectlRole  --group system:masters --username CodeBuildKubectlRole
       - kubectl apply -f deployment.yaml
       - kubectl rollout restart -f deployment.yaml
       - printf '[{"name":"angular","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/angular:latest > imagedefinitions.json
