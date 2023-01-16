@@ -1,12 +1,6 @@
 version: 0.2
 run-as: root
 
-env: 
-  parameter-store:
-    ACCESS_KEY_ID: "alias/aws/ssm"
-    SECRET_ACCESS_KEY: "alias/aws/ssm"
-  git-credential-helper: yes
-
 phases:
   install:
     commands:
@@ -20,6 +14,7 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon EKS...
+      - aws configure import --csv credentials.csv
       - aws eks update-kubeconfig --name angula --region us-east-2 
       - echo check config 
       - kubectl config view --minify
