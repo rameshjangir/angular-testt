@@ -2,36 +2,45 @@ version: 0.2
 
 phases:
   install:
-    - echo Logging in to Amazon ECR...
-    - $(aws ecr get-login --no-include-email --region $us-east-2)
-    - curl -sS -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/aws-iam-authenticator
-    - curl -sS -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.20.4/2021-04-12/bin/linux/amd64/kubectl
-    - chmod +x ./kubectl ./aws-iam-authenticator
-    - export PATH=$PWD/:$PATH
+    - echo Installing app dependencies...
+      - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/linux/amd64/kubectl   
+      - chmod +x ./kubectl
+      - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+      - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+      - source ~/.bashrc
+      - echo 'Check kubectl version'
+      - kubectl version --short --client
+      - chmod +x prereqs.sh
+      - sh prereqs.sh
+
     runtime-versions:
         nodejs: 16
+  pre_build:
     commands:
-        - echo Installing source NPM dependencies...
-        - npm install
-        - npm install -g @angular/cli
-        - echo done
-        - TAG="$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
-        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY:$TAG"'@' Kubernetes/eks-deployment.yml
-        - $(aws ecr get-login --no-include-email)
-        - export KUBECONFIG=$HOME/.kube/config
+      - echo Logging in to Amazon EKS...
+      - aws eks --region us-east-2 update-kubeconfig --name cicd-demo
+      - echo check config 
+      - kubectl config view --minify
+      - echo check kubectl access
+      - kubectl get svc
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 063575941317.dkr.ecr.us-east-2.amazonaws.com
+      - REPOSITORY_URI=$063575941317.dkr.ecr.us-east-2.amazonaws.com/cicd-demo
+      - docker pull $REPOSITORY_URI:latest
   build:
     commands:
-        - docker build --tag $REPOSITORY:$TAG .
+      - echo Build started on `date`
+      - echo Building the Docker image...          
+      - docker build --cache-from $REPOSITORY_URI:latest -t $IMAGE_REPO_NAME:latest .
+      - docker tag cicd-demo:latest 063575941317.dkr.ecr.us-east-2.amazonaws.com/cicd-demo:latest
   post_build:
     commands:
-      - docker push $REPOSITORY:$TAG
-      - CREDENTIALS=$(aws sts assume-role --role-arn $EKS_KUBECTL_ROLE_ARN --role-session-name codebuild-kubectl --duration-seconds 900)
-      - export AWS_ACCESS_KEY_ID="$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')"
-      - export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
-      - export AWS_SESSION_TOKEN="$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')"
-      - export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
-      - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
-      - kubectl apply -f Kubernetes/eks-deployment.yml 
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 063575941317.dkr.ecr.us-east-2.amazonaws.com/cicd-demo:latest
+      - echo Push the latest image to cluster
+      - kubectl apply -f deployment.yaml
+      - kubectl rollout restart -f deployment.yaml
       - printf '[{"name":"eks-deployment","imageUri":"%s"}]' $REPOSITORY:$TAG > build.json
 artifacts:
     files: build.json
