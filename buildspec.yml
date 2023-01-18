@@ -3,22 +3,10 @@ run-as: root
 
 phases:
   install:
-    commands:
-      - kubectl version --short --client
-      - chmod +x prereqs.sh
-      - sh prereqs.sh
-      - chmod +x create_iam_role.sh
-      - sh create_iam_role.sh
     runtime-versions:
       nodejs: 16
   pre_build:
     commands:
-      - echo Logging in to Amazon EKS...
-      - aws configure import --csv file://credentials.csv
-      - aws eks update-kubeconfig --name angula --region us-east-2 
-      - echo check config 
-      - kubectl config view --minify
-      - echo check kubectl access
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 928052840712.dkr.ecr.us-east-2.amazonaws.com
   build:
@@ -28,18 +16,14 @@ phases:
       - npm install -g @angular/cli@latest
       - ng build --base-href=.
       - echo Building a Docker image..
+      - docker build -t angular .
       - echo Tagging Docker image for ECR..
+      - docker tag angular:latest 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker Image
-      - echo DONE
-      - cat ~/.kube/config
-      - cat ~/.aws/credentials
-      - kubectl get configmap -n kube-system aws-auth -o yaml
-      - eksctl create iamidentitymapping  --cluster angula --arn arn:aws:iam::928052840712:role/CodeBuildKubectlRole  --group system:masters --username CodeBuildKubectlRole
-      - kubectl apply -f deployment.yaml
-      - kubectl rollout restart -f deployment.yaml
+      - docker tag angular:latest 928052840712.dkr.ecr.us-east-2.amazonaws.com/angular:latest
       - printf '[{"name":"angular","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/angular:latest > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
